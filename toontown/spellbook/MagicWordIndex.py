@@ -19,6 +19,27 @@ from panda3d.otp import NametagGroup, WhisperPopup
 from otp.otpbase import OTPLocalizer
 from otp.otpbase import OTPGlobals
 
+from toontown.battle import SuitBattleGlobals
+from toontown.char import CharDNA
+from toontown.coghq import CogDisguiseGlobals
+from toontown.effects import FireworkShows
+from toontown.estate import GardenGlobals
+from toontown.fishing import FishGlobals
+from toontown.golf import GolfGlobals
+from toontown.hood import ZoneUtil
+from toontown.parties import PartyGlobals
+from toontown.quest import Quests
+from toontown.racing.KartDNA import *
+from toontown.racing import RaceGlobals
+from toontown.shtiker import CogPageGlobals
+from toontown.toon import NPCToons
+from toontown.suit import SuitDNA
+from toontown.toon import Experience
+from toontown.toon import ToonDNA
+from toontown.toonbase import ToontownBattleGlobals
+from toontown.toonbase import ToontownGlobals
+from toontown.toonbase import TTLocalizer
+
 from . import MagicWordConfig
 import time, random, re, json
 
@@ -272,6 +293,380 @@ class MaxToon(MagicWord):
         toon.b_setBankMoney(toon.maxBankMoney)
 
         return f"Successfully maxed {toon.getName()}!"
+
+class SkipCFO(MagicWord):
+    desc = "Skips to the indicated round of the CFO."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("round", str, False, "next")]
+    accessLevel = "MODERATOR"
+
+    def handleWord(self, invoker, avId, toon, *args):
+        battle = args[0]
+
+        from toontown.suit.DistributedCashbotBossAI import DistributedCashbotBossAI
+        boss = None
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedCashbotBossAI):
+                if invoker.doId in do.involvedToons:
+                    boss = do
+                    break
+        if not boss:
+            return "You aren't in a CFO!"
+
+        battle = battle.lower()
+
+        if battle == 'two':
+            if boss.state in ('PrepareBattleThree', 'BattleThree'):
+                return "You can not return to previous rounds!"
+            else:
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleThree')
+                return "Skipping to last round..."
+
+        if battle == 'next':
+            if boss.state in ('PrepareBattleOne', 'BattleOne'):
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleThree')
+                return "Skipping current round..."
+            elif boss.state in ('PrepareBattleThree', 'BattleThree'):
+                boss.exitIntroduction()
+                boss.b_setState('Victory')
+                return "Skipping final round..."
+
+
+class HitCFO(MagicWord):
+    desc = "Hits the CFO."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("damage", int, False, 0)]
+    accessLevel = "MODERATOR"
+
+    def handleWord(self, invoker, avId, toon, *args):
+        dmg = args[0]
+        from toontown.suit.DistributedCashbotBossAI import DistributedCashbotBossAI
+        boss = None
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedCashbotBossAI):
+                if invoker.doId in do.involvedToons:
+                    boss = do
+                    break
+        if not boss:
+            return "You aren't in a CFO!"
+
+        boss.magicWordHit(dmg, invoker.doId)
+
+
+class DisableGoons(MagicWord):
+    desc = "Stuns all of the goons in an area."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+
+    def handleWord(self, invoker, avId, toon, *args):
+        from toontown.suit.DistributedGoonAI import DistributedGoonAI
+        for goon in simbase.air.doFindAllInstances(DistributedGoonAI):
+            goon.requestStunned(0)
+        return "Disabled all Goons!"
+
+
+class SkipCJ(MagicWord):
+    desc = "Skips to the indicated round of the CJ."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("round", str, False, "next")]
+    accessLevel = "MODERATOR"
+
+    def handleWord(self, invoker, avId, toon, *args):
+        battle = args[0]
+        from toontown.suit.DistributedChiefJusticeAI import DistributedChiefJusticeAI
+        boss = None
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedChiefJusticeAI):
+                if invoker.doId in do.involvedToons:
+                    boss = do
+                    break
+        if not boss:
+            return "You aren't in a CJ!"
+
+        battle = battle.lower()
+
+        if battle == 'two':
+            if boss.state in ('RollToBattleTwo', 'PrepareBattleTwo', 'BattleTwo', 'PrepareBattleThree', 'BattleThree'):
+                return "You can not return to previous rounds!"
+            else:
+                boss.exitIntroduction()
+                boss.b_setState('RollToBattleTwo')
+                return "Skipping to second round..."
+
+        if battle == 'three':
+            if boss.state in ('PrepareBattleThree', 'BattleThree'):
+                return "You can not return to previous rounds!"
+            else:
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleThree')
+                return "Skipping to final round..."
+
+        if battle == 'next':
+            if boss.state in ('PrepareBattleOne', 'BattleOne'):
+                boss.exitIntroduction()
+                boss.b_setState('RollToBattleTwo')
+                return "Skipping current round..."
+            elif boss.state in ('RollToBattleTwo', 'PrepareBattleTwo', 'BattleTwo'):
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleThree')
+                return "Skipping current round..."
+            elif boss.state in ('PrepareBattleThree', 'BattleThree'):
+                boss.exitIntroduction()
+                boss.enterNearVictory()
+                boss.b_setState('Victory')
+                return "Skipping final round..."
+
+
+class FillJury(MagicWord):
+    desc = "Fills all of the chairs in the CJ's Jury Round."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    accessLevel = "MODERATOR"
+
+    def handleWord(self, invoker, avId, toon, *args):
+        boss = None
+        from toontown.suit.DistributedChiefJusticeAI import DistributedChiefJusticeAI
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedChiefJusticeAI):
+                if invoker.doId in do.involvedToons:
+                    boss = do
+                    break
+        if not boss:
+            return "You aren't in a CJ!"
+        if not boss.state == 'BattleTwo':
+            return "You aren't in the cannon round."
+        for i in xrange(len(boss.chairs)):
+            boss.chairs[i].b_setToonJurorIndex(0)
+            boss.chairs[i].requestToonJuror()
+        return "Filled chairs."
+
+
+class SkipVP(MagicWord):
+    desc = "Skips to the indicated round of the VP."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("round", str, False, "next")]
+    accessLevel = "MODERATOR"
+
+    def handleWord(self, invoker, avId, toon, *args):
+        battle = args[0]
+        from toontown.suit.DistributedSellbotBossAI import DistributedSellbotBossAI
+        boss = None
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedSellbotBossAI):
+                if invoker.doId in do.involvedToons:
+                    boss = do
+                    break
+        if not boss:
+            return "You aren't in a VP!"
+
+        battle = battle.lower()
+
+        if battle == 'three':
+            if boss.state in ('PrepareBattleThree', 'BattleThree'):
+                return "You can not return to previous rounds!"
+            else:
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleThree')
+                return "Skipping to final round..."
+
+        if battle == 'next':
+            if boss.state in ('PrepareBattleOne', 'BattleOne'):
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleThree')
+                return "Skipping current round..."
+            elif boss.state in ('PrepareBattleThree', 'BattleThree'):
+                boss.exitIntroduction()
+                boss.b_setState('Victory')
+                return "Skipping final round..."
+
+class playAnimation1(MagicWord):
+    desc = "Play the Animation: Sell Off."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    accessLevel = "MODERATOR"
+
+    def handleWord(self, invoker, avId, toon, *args):
+        from toontown.animations.DistributedSellOffAI import DistributedSellOffAI
+        animation = None
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedSellOffAI):        
+                animation = do
+                break
+        if not DistributedSellOffAI:
+            return "Cannot Play Animation!"
+        
+        animation.startAnimation()
+
+        
+        
+class StunVP(MagicWord):
+    desc = "Stuns the VP in the final round of his battle."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    accessLevel = "MODERATOR"
+
+    def handleWord(self, invoker, avId, toon, *args):
+        from toontown.suit.DistributedSellbotBossAI import DistributedSellbotBossAI
+        boss = None
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedSellbotBossAI):
+                if invoker.doId in do.involvedToons:
+                    boss = do
+                    break
+        if not boss:
+            return "You aren't in a VP!"
+        currState = boss.getCurrentOrNextState()
+        if currState != 'BattleThree':
+            return "You aren't in the final round of a VP!"
+        boss.b_setAttackCode(ToontownGlobals.BossCogDizzyNow)
+        boss.b_setBossDamage(boss.getBossDamage(), 0, 0)
+
+
+class SkipCEO(MagicWord):
+    desc = "Skips to the indicated round of the CEO."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("round", str, False, "next")]
+    accessLevel = "MODERATOR"
+
+    def handleWord(self, invoker, avId, toon, *args):
+        battle = args[0]
+        from toontown.suit.DistributedBossbotBossAI import DistributedBossbotBossAI
+        boss = None
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedBossbotBossAI):
+                if invoker.doId in do.involvedToons:
+                    boss = do
+                    break
+        if not boss:
+            return "You aren't in a CEO!"
+
+        battle = battle.lower()
+
+        if battle == 'two':
+            if boss.state in ('PrepareBattleFour', 'BattleFour', 'PrepareBattleThree', 'BattleThree', 'PrepareBattleTwo', 'BattleTwo'):
+                return "You can not return to previous rounds!"
+            else:
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleTwo')
+                return "Skipping to second round..."
+
+        if battle == 'three':
+            if boss.state in ('PrepareBattleFour', 'BattleFour', 'PrepareBattleThree', 'BattleThree'):
+                return "You can not return to previous rounds!"
+            else:
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleThree')
+                return "Skipping to third round..."
+
+        if battle == 'four':
+            if boss.state in ('PrepareBattleFour', 'BattleFour'):
+                return "You can not return to previous rounds!"
+            else:
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleFour')
+                return "Skipping to last round..."
+
+        if battle == 'next':
+            if boss.state in ('PrepareBattleOne', 'BattleOne'):
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleTwo')
+                return "Skipping current round..."
+            elif boss.state in ('PrepareBattleTwo', 'BattleTwo'):
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleThree')
+                return "Skipping current round..."
+            elif boss.state in ('PrepareBattleThree', 'BattleThree'):
+                boss.exitIntroduction()
+                boss.b_setState('PrepareBattleFour')
+                return "Skipping current round..."
+            elif boss.state in ('PrepareBattleFour', 'BattleFour'):
+                boss.exitIntroduction()
+                boss.b_setState('Victory')
+                return "Skipping final round..."
+
+
+class FeedDiners(MagicWord):
+    desc = "Feed the diners in the CEO battle."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+
+    def handleWord(self, invoker, avId, toon, *args):
+        boss = None
+        from toontown.suit.DistributedBossbotBossAI import DistributedBossbotBossAI
+        for do in simbase.air.doId2do.values():
+            if isinstance(do, DistributedBossbotBossAI):
+                if invoker.doId in do.involvedToons:
+                    boss = do
+                    break
+        if not boss:
+            return "You aren't in a CEO!"
+
+        if boss.state != 'BattleTwo':
+            return "You aren't in the waiter round!"
+
+        for table in boss.tables:
+            for chairIndex in table.dinerInfo.keys():
+                dinerStatus = table.getDinerStatus(chairIndex)
+                if dinerStatus in (table.HUNGRY, table.ANGRY):
+                    table.foodServed(chairIndex)
+
+        return "All diners have been fed!"
+
+class SpawnCog(MagicWord):
+    aliases = ["cog"]
+    desc = "Spawns a cog with the defined level"
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("suit", str, True), ("level", int, False, 1), ("specialSuit", int, False, 0)]
+
+    def handleWord(self, invoker, avId, toon, *args):
+        name = args[0]
+        level = args[1]
+        specialSuit = args[2]
+        zoneId = invoker.getLocation()[1]
+        if name not in SuitDNA.suitHeadTypes:
+            return "Suit %s is not a valid suit!" % name
+        if level not in ToontownGlobals.SuitLevels:
+            return "Invalid Cog Level."
+
+        sp = simbase.air.suitPlanners.get(zoneId - (zoneId % 100))
+        if not sp:
+            return "Unable to spawn %s in current zone." % name
+        pointmap = sp.streetPointList
+        sp.createNewSuit([], pointmap, suitName=name, suitLevel=level)
+        return "Spawned %s in current zone." % name
+
+class SpawnInvasion(MagicWord):
+    aliases = ["invasion"]
+    desc = "Spawn an invasion on the current AI if one doesn't exist."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("command", str, True), ("suit", str, False, "f"), ("amount", int, False, 1000), ("skelecog", int, False, 0)]
+
+    def handleWord(self, invoker, avId, toon, *args):
+        cmd = args[0]
+        name = args[1]
+        num = args[2]
+        skeleton = args[3]
+        
+        self.safeDistricts = [403000001]
+        
+        if simbase.air.districtId in self.safeDistricts:
+            return "Can't Summon an invasion in a safe district."
+        else:
+            if not 10 <= num <= 25000:
+                return "Can't the invasion amount to {}! Specify a value between 10 and 25,000.".format(num)
+
+            invMgr = simbase.air.suitInvasionManager
+            if cmd == 'start':
+                if invMgr.getInvading():
+                    return "There is already an invasion on the current AI!"
+                if not name in SuitDNA.suitHeadTypes:
+                    return "This cog does not exist!"
+                invMgr.startInvasion(name, num, skeleton)
+            elif cmd == 'stop':
+                if not invMgr.getInvading():
+                    return "There is no invasion on the current AI!"
+                #elif invMgr.undergoingMegaInvasion:
+                #    return "The current invasion is a mega invasion, you must stop the holiday to stop the invasion."
+                invMgr.stopInvasion()
+            else:
+                return "You didn't enter a valid command! Commands are ~invasion start or stop."
 
 # Instantiate all classes defined here to register them.
 # A bit hacky, but better than the old system
