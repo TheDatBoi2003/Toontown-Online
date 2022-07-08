@@ -850,6 +850,10 @@ SuitInvasionBegin = 0
 SuitInvasionUpdate = 1
 SuitInvasionEnd = 2
 SuitInvasionBulletin = 3
+
+#suit levels for magic words
+SuitLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
 NO_HOLIDAY = 0
 JULY4_FIREWORKS = 1
 NEWYEARS_FIREWORKS = 2

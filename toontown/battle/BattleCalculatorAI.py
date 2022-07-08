@@ -44,6 +44,8 @@ class BattleCalculatorAI:
         self.toonHPAdjusts = {}
         self.toonSkillPtsGained = {}
         self.traps = {}
+        self.statusEffects = {}
+        self.suitAccuracyStats = {}
         self.npcTraps = {}
         self.suitAtkStats = {}
         self.__clearBonuses(hp=1)
@@ -223,6 +225,33 @@ class BattleCalculatorAI:
             return 0
         return
 
+    def addStatusEffect(self, targetId, statusString, value):
+        self.statusEffects[targetId] = [statusString, value]
+    
+    def getStatusEffect(self, targetId, statusString):
+        if targetId in self.statusEffects:
+            if self.statusEffects[targetId][0] == statusString:
+                return self.statusEffects[targetId]
+        return 0
+    
+    def removeStatusEffect(self, targetId, statusString):
+        if targetId in self.statusEffects:
+            if self.statusEffects[targetId][0] == statusString:
+                del self.statusEffects[targetId]
+    
+    def handleStatusEffects(self, targetId):
+        try:
+            if self.statusEffects[targetId][0] == 'soaked':
+                self.suitIsSoaked(targetId, self.statusEffects[targetId][1])
+        except:
+            pass
+        
+    def suitIsSoaked(self, targetId, value):
+        self.suitAccuracyStats[targetId] = ['soaked', value]
+    
+    def getSuitAccuracyStats(self, targetId):
+        return self.suitAccuracyStats[targetId]
+    
     def __toonCheckGagBonus(self, toonId, track, level):
         toon = self.battle.getToon(toonId)
         if toon != None:
@@ -520,6 +549,8 @@ class BattleCalculatorAI:
                 else:
                     organicBonus = toon.checkGagBonus(attackTrack, attackLevel)
                     propBonus = self.__checkPropBonus(attackTrack)
+                    if self.__attackHasHit(attack, suit=0) and atkTrack == SQUIRT:
+                        self.addStatusEffect(targetId, 'soaked', 15)
                     attackDamage = getAvPropDamage(attackTrack, attackLevel, toon.experience.getExp(attackTrack), organicBonus, propBonus, self.propAndOrganicBonusStack)
                 if not self.__combatantDead(targetId, toon=toonTarget):
                     if self.__suitIsLured(targetId) and atkTrack == DROP:
@@ -1115,11 +1146,19 @@ class BattleCalculatorAI:
             if self.suitsAlwaysMiss:
                 return 0
         theSuit = self.battle.activeSuits[attackIndex]
+        suitId = theSuit.doId
         atkType = self.battle.suitAttacks[attackIndex][SUIT_ATK_COL]
         atkInfo = SuitBattleGlobals.getSuitAttack(theSuit.dna.name, theSuit.getLevel(), atkType)
         atkAcc = atkInfo['acc']
         suitAcc = SuitBattleGlobals.SuitAttributes[theSuit.dna.name]['acc'][theSuit.getLevel()]
+        
         acc = atkAcc
+        try:
+            if self.suitAccuracyStats[suitId][1]:
+                acc -= self.suitAccuracyStats[suitId][1]
+        except:
+            pass
+        print(acc)
         randChoice = random.randint(0, 99)
         if self.notify.getDebug():
             self.notify.debug('Suit attack rolled ' + str(randChoice) + ' to hit with an accuracy of ' + str(acc) + ' (attackAcc: ' + str(atkAcc) + ' suitAcc: ' + str(suitAcc) + ')')
@@ -1372,8 +1411,13 @@ class BattleCalculatorAI:
             if not hasattr(suit, 'dna'):
                 self.notify.warning('a removed suit is in this battle!')
                 return None
-
+        
         self.__calculateToonAttacks()
+        for suit in self.battle.activeSuits:
+            self.handleStatusEffects(suit.doId)
+        
+        for toon in self.battle.activeToons:
+            self.handleStatusEffects(toon)
         self.__updateLureTimeouts()
         self.__calculateSuitAttacks()
         if toonsHit == 1:
