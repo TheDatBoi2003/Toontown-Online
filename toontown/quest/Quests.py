@@ -66,7 +66,7 @@ BR_TIER = 11
 DL_TIER = 14
 LAWBOT_HQ_TIER = 18
 BOSSBOT_HQ_TIER = 32
-LAST_TRACK_TASKLINE = 33
+ALL_TIER = 33
 ELDER_TIER = 50
 LOOPING_FINAL_TIER = ELDER_TIER
 VISIT_QUEST_ID = 1000
@@ -77,6 +77,19 @@ PHONE_QUEST_ID = 175
 NEWBIE_HP = 25
 SELLBOT_HQ_NEWBIE_HP = 50
 CASHBOT_HQ_NEWBIE_HP = 85
+
+trackV2NamesS = ['a Version 2.0 Bossbot', 'a Version 2.0 Lawbot', 'a Version 2.0 Cashbot', 'a Version 2.0 Sellbot']
+trackV2NamesP = ['Version 2.0 Bossbots', 'Version 2.0 Lawbots', 'Version 2.0 Cashbots', 'Version 2.0 Sellbots']
+
+tierToSuitDNADict = {0: ['f', 'bf', 'sc', 'cc'],
+                     1: ['p', 'b', 'pp', 'tm'],
+                     2: ['ym', 'dt', 'tw', 'nd'],
+                     3: ['mm', 'ac', 'bc', 'gh'],
+                     4: ['ds', 'bs', 'nc', 'ms'],
+                     5: ['hh', 'sd', 'mb', 'tf'],
+                     6: ['cr', 'le', 'ls', 'm'],
+                     7: ['tbc', 'bw', 'rb', 'mh']}
+
 from toontown.toonbase.ToontownGlobals import FT_FullSuit, FT_Leg, FT_Arm, FT_Torso
 QuestRandGen = random.Random()
 
@@ -200,6 +213,9 @@ class Quest:
 
     def checkNumCogs(self, num):
         self.check(1, 'invalid number of cogs: %s' % num)
+    
+    def checkCogTier(self, num):
+        self.check(1, 'invalid Tier for cogs: %s' % num)
 
     def checkNewbieLevel(self, level):
         self.check(1, 'invalid newbie level: %s' % level)
@@ -421,7 +437,6 @@ class LocationBasedQuest(Quest):
         return (TTLocalizer.QuestsLocationString + TTLocalizer.Period) % {'string': self.getString(),
          'location': self.getLocationName()}
 
-
 class NewbieQuest:
     def getNewbieLevel(self):
         notify.error('Pure virtual - please override me')
@@ -527,6 +542,29 @@ class CogQuest(LocationBasedQuest):
         questCogType = self.getCogType()
         return (questCogType is Any or questCogType is cogDict['type']) and avId in cogDict['activeToons'] and self.isLocationMatch(zoneId)
 
+class CogTierQuest(CogQuest):
+    def __init__(self, id, quest):
+        CogQuest.__init__(self, id, quest)
+        if self.__class__ == CogNewbieQuest:
+            self.checkNumCogs(self.quest[1])
+            self.checkCogTier(self.quest[2])
+    
+    def getRandomCog(self):
+        #get a random cog in the specified tier
+        tierNeeded = tierToSuitDNADict[self.quest[2]]
+        
+        return random.choice(tierNeeded)
+    
+    def getCogNameString(self):
+        numCogs = self.getNumCogs()
+        if numCogs == 1:
+            return 'a Tier ' + str(self.quest[2] + 1) + ' Cog'
+        else:
+            return 'Tier ' + str(self.quest[2] + 1) + ' Cogs'
+     
+    def doesCogCount(self, avId, cogDict, zoneId, avList):
+        tierNeeded = tierToSuitDNADict[self.quest[2]]
+        return cogDict['type'] in tierNeeded and avId in cogDict['activeToons'] and self.isLocationMatch(zoneId)
 
 class CogNewbieQuest(CogQuest, NewbieQuest):
     def __init__(self, id, quest):
@@ -1700,15 +1738,21 @@ class RecoverItemQuest(LocationBasedQuest):
 
 
 class TrackChoiceQuest(Quest):
+
     def __init__(self, id, quest):
         Quest.__init__(self, id, quest)
-        self.checkTrackChoice(self.quest[0])
-        self.checkTrackChoice(self.quest[1])
+        if ToontownBattleGlobals.LAST_TRACK not in self.quest:
+            self.checkTrackChoice(self.quest[0])
+            self.checkTrackChoice(self.quest[1])
 
     def getChoices(self):
-        return (self.quest[0], self.quest[1])
+        if ToontownBattleGlobals.LAST_TRACK not in self.quest:
+            return (self.quest[0], self.quest[1])
+        else:
+            return (
+             self.quest[0],)
 
-    def getCompletionStatus(self, av, questDesc, npc = None):
+    def getCompletionStatus(self, av, questDesc, npc=None):
         questId, fromNpcId, toNpcId, rewardId, toonProgress = questDesc
         if npc and npcMatches(toNpcId, npc):
             return COMPLETE
@@ -1722,24 +1766,39 @@ class TrackChoiceQuest(Quest):
             return NotChosenString
 
     def getObjectiveStrings(self):
-        trackA, trackB = self.getChoices()
-        trackAName = ToontownBattleGlobals.Tracks[trackA].capitalize()
-        trackBName = ToontownBattleGlobals.Tracks[trackB].capitalize()
-        return [trackAName, trackBName]
+        if ToontownBattleGlobals.LAST_TRACK not in self.quest:
+            trackA, trackB = self.getChoices()
+            trackAName = ToontownBattleGlobals.Tracks[trackA].capitalize()
+            trackBName = ToontownBattleGlobals.Tracks[trackB].capitalize()
+            return [
+             trackAName, trackBName]
+        else:
+            trackName = [
+             ToontownBattleGlobals.FinalTrack]
+            return trackName
 
     def getString(self):
-        return TTLocalizer.QuestsTrackChoiceQuestString % {'trackA': self.getObjectiveStrings()[0],
-         'trackB': self.getObjectiveStrings()[1]}
+        if ToontownBattleGlobals.LAST_TRACK not in self.quest:
+            return TTLocalizer.QuestsTrackChoiceQuestString % {'trackA': self.getObjectiveStrings()[0], 'trackB': self.getObjectiveStrings()[1]}
+        else:
+            return TTLocalizer.QuestsTrackChoiceFinalQuestString % self.getObjectiveStrings()
 
     def getSCStrings(self, toNpcId, progress):
-        trackA, trackB = self.getChoices()
-        trackAName = ToontownBattleGlobals.Tracks[trackA].capitalize()
-        trackBName = ToontownBattleGlobals.Tracks[trackB].capitalize()
-        return [TTLocalizer.QuestsTrackChoiceQuestSCString % {'trackA': trackAName,
-          'trackB': trackBName}, TTLocalizer.QuestsTrackChoiceQuestMaybeSCString % trackAName, TTLocalizer.QuestsTrackChoiceQuestMaybeSCString % trackBName] + getVisitSCStrings(toNpcId)
+        if ToontownBattleGlobals.LAST_TRACK not in self.quest:
+            trackA, trackB = self.getChoices()
+            trackAName = ToontownBattleGlobals.Tracks[trackA].capitalize()
+            trackBName = ToontownBattleGlobals.Tracks[trackB].capitalize()
+            return [
+             TTLocalizer.QuestsTrackChoiceQuestSCString % {'trackA': trackAName, 'trackB': trackBName}, TTLocalizer.QuestsTrackChoiceQuestMaybeSCString % trackAName, TTLocalizer.QuestsTrackChoiceQuestMaybeSCString % trackBName] + getVisitSCStrings(toNpcId)
+        else:
+            return [
+             TTLocalizer.QuestsTrackChoiceFinalQuestSCString]
 
     def getHeadlineString(self):
-        return TTLocalizer.QuestsTrackChoiceQuestHeadline
+        if ToontownBattleGlobals.LAST_TRACK not in self.quest:
+            return TTLocalizer.QuestsTrackChoiceQuestHeadline
+        else:
+            return TTLocalizer.QuestsTrackChoiceFinalQuestHeadline
 
 
 class FriendQuest(Quest):
@@ -17668,7 +17727,12 @@ QuestDict = {
          2001,
          4216,
          NA,
-         TTLocalizer.QuestDialogDict[12032])}
+         TTLocalizer.QuestDialogDict[12032]),
+ 
+ # The Cogs are atempting to break the silly meter, and Toontown needs YOU, to stop them!
+ 13000: (ALL_TIER, Start, (VisitQuest,), Any, 2001, NA, 13001, TTLocalizer.QuestDialogDict[13000]),
+ 13001: (ALL_TIER, Cont, (RecoverItemQuest, Anywhere, 1, 8000, Medium, 'tf'), 2001, 2001, NA, 13002, TTLocalizer.QuestDialogDict[13001]),
+ 13002: (ALL_TIER, Cont, (CogTierQuest, Anywhere, 5, 5), 2001, 2001, 100, NA, TTLocalizer.QuestDialogDict[13002])}
 
 Tier2QuestsDict = {}
 for questId, questDesc in list(QuestDict.items()):
@@ -18710,6 +18774,7 @@ RewardDict = {100: (MaxHpReward, 1),
  405: (TrackTrainingReward, ToontownBattleGlobals.THROW_TRACK),
  406: (TrackTrainingReward, ToontownBattleGlobals.SQUIRT_TRACK),
  407: (TrackTrainingReward, ToontownBattleGlobals.DROP_TRACK),
+ 408: (TrackTrainingReward, ToontownBattleGlobals.LAST_TRACK), 
  500: (MaxQuestCarryReward, 2),
  501: (MaxQuestCarryReward, 3),
  502: (MaxQuestCarryReward, 4),
@@ -19446,6 +19511,7 @@ RequiredRewardTrackDict = {TT_TIER: (100,),
  BOSSBOT_HQ_TIER + 14: (4214,),
  BOSSBOT_HQ_TIER + 15: (4215,),
  BOSSBOT_HQ_TIER + 16: (4216,),
+ ALL_TIER: (100,),
  ELDER_TIER: (4000,
               4001,
               4002,

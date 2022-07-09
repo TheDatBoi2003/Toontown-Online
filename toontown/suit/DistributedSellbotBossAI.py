@@ -371,12 +371,13 @@ class DistributedSellbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
             toon = self.air.doId2do.get(toonId)
             if toon:
                 configMax = simbase.config.GetInt('max-sos-cards', 16)
-                if configMax == 8:
-                    maxNumCalls = 1
-                else:
-                    maxNumCalls = 2
+                
+                maxNumCalls = 4
                 if not toon.attemptAddNPCFriend(self.cagedToonNpcId, numCalls=maxNumCalls):
                     self.notify.info('%s.unable to add NPCFriend %s to %s.' % (self.doId, self.cagedToonNpcId, toonId))
+
+                self.extraFriend = random.choice(NPCToons.npcFriendsMinMaxStars(3, 5))
+                toon.attemptAddNPCFriend(self.extraFriend, numCalls=maxNumCalls)
                 if self.__shouldPromoteToon(toon):
                     toon.b_promote(self.deptIndex)
                     self.sendUpdateToAvatarId(toonId, 'toonPromoted', [1])

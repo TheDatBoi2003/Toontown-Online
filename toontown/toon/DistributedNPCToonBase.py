@@ -1,12 +1,12 @@
-from pandac.PandaModules import *
+from panda3d.core import *
 from panda3d.otp import *
 from direct.directnotify import DirectNotifyGlobal
 from direct.fsm import ClassicFSM
 from direct.fsm import State
 from toontown.toonbase import ToontownGlobals
-from . import DistributedToon
+from toontown.toon import DistributedToon
 from direct.distributed import DistributedObject
-from . import NPCToons
+from toontown.toon import NPCToons
 from toontown.quest import Quests
 from direct.distributed import ClockDelta
 from toontown.quest import QuestParser
@@ -69,7 +69,7 @@ class DistributedNPCToonBase(DistributedToon.DistributedToon):
 
     def initToonState(self):
         self.setAnimState('neutral', 0.9, None, None)
-        npcOrigin = render.find('**/npc_origin_' + repr((self.posIndex)))
+        npcOrigin = render.find('**/npc_origin_' + str(self.posIndex))
         if not npcOrigin.isEmpty():
             self.reparentTo(npcOrigin)
             self.initPos()
@@ -133,3 +133,9 @@ class DistributedNPCToonBase(DistributedToon.DistributedToon):
 
     def setPositionIndex(self, posIndex):
         self.posIndex = posIndex
+
+    def _startZombieCheck(self):
+        pass
+
+    def _stopZombieCheck(self):
+        pass

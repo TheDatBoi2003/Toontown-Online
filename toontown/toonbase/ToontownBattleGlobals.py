@@ -1,12 +1,12 @@
 from .ToontownGlobals import *
 import math
 from . import TTLocalizer
-BattleCamFaceOffFov = 30.0
-BattleCamFaceOffPos = Point3(0, -10, 4)
-BattleCamDefaultPos = Point3(0, -8.6, 16.5)
+BattleCamFaceOffFov = 50.0
+BattleCamFaceOffPos = Point3(0, -8, 9.5)
+BattleCamDefaultPos = Point3(0, -8.6, 20)
 BattleCamDefaultHpr = Vec3(0, -61, 0)
-BattleCamDefaultFov = 80.0
-BattleCamMenuFov = 65.0
+BattleCamDefaultFov = 90.0
+BattleCamMenuFov = 80.0
 BattleCamJoinPos = Point3(0, -12, 13)
 BattleCamJoinHpr = Vec3(0, -45, 0)
 SkipMovie = 0
@@ -30,6 +30,7 @@ DROP_TRACK = 6
 NPC_RESTOCK_GAGS = 7
 NPC_TOONS_HIT = 8
 NPC_COGS_MISS = 9
+LAST_TRACK = 12
 MIN_TRACK_INDEX = 0
 MAX_TRACK_INDEX = 6
 MIN_LEVEL_INDEX = 0

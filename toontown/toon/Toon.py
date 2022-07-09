@@ -628,6 +628,7 @@ class Toon(Avatar.Avatar, ToonHead):
             self.sendLogSuspiciousEvent('nakedToonDNA %s was requested' % newDNA.torso)
             newDNA.torso = newDNA.torso + 's'
         self.setDNA(newDNA)
+        self.setBlend(frameBlend=True)
 
     def setDNA(self, dna):
         if hasattr(self, 'isDisguised'):

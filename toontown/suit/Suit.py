@@ -22,6 +22,7 @@ AllSuitsMinigame = (('victory', 'victory'),
 AllSuitsTutorialBattle = (('lose', 'lose'), ('pie-small-react', 'pie-small'), ('squirt-small-react', 'squirt-small'))
 AllSuitsBattle = (('drop-react', 'anvil-drop'),
  ('flatten', 'drop'),
+ ('lured', 'lured'),
  ('sidestep-left', 'sidestep-left'),
  ('sidestep-right', 'sidestep-right'),
  ('squirt-large-react', 'squirt-large'),
@@ -620,6 +621,7 @@ class Suit(Avatar.Avatar):
         else:
             self.loadModel('phase_3.5' + filePrefix + 'mod')
         self.loadAnims(animDict)
+        self.setBlend(frameBlend = True)
         self.setSuitClothes()
 
     def generateAnimDict(self):
@@ -912,6 +914,7 @@ class Suit(Avatar.Avatar):
                 loseModel = 'phase_' + str(phase) + filePrefix + 'lose-mod'
                 loseAnim = 'phase_' + str(phase) + filePrefix + 'lose'
                 self.loseActor = Actor.Actor(loseModel, {'lose': loseAnim})
+                self.loseActor.setBlend(frameBlend = True)
                 loseNeck = self.loseActor.find('**/joint_head')
                 for part in self.headParts:
                     part.instanceTo(loseNeck)

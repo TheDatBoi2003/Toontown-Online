@@ -2,6 +2,7 @@ from direct.directnotify import DirectNotifyGlobal
 from panda3d.core import *
 from panda3d.toontown import *
 
+
 from otp.ai.AIZoneData import AIZoneDataStore
 from otp.ai.TimeManagerAI import TimeManagerAI
 from otp.distributed.OtpDoGlobals import *
@@ -42,6 +43,7 @@ from toontown.racing.DistributedStartingBlockAI import DistributedStartingBlockA
 from toontown.racing.DistributedStartingBlockAI import DistributedViewingBlockAI
 from toontown.racing.DistributedViewPadAI import DistributedViewPadAI
 from toontown.racing.RaceManagerAI import RaceManagerAI
+from toontown.tutorial.TutorialManagerAI import TutorialManagerAI
 from toontown.safezone.SafeZoneManagerAI import SafeZoneManagerAI
 from toontown.shtiker.CogPageManagerAI import CogPageManagerAI
 from toontown.spellbook.ToontownMagicWordManagerAI import ToontownMagicWordManagerAI
@@ -90,6 +92,7 @@ class ToontownAIRepository(ToontownInternalRepository):
         self.trophyMgr = None
         self.safeZoneManager = None
         self.magicWordManager = None
+        self.tutorialManager = None
         self.zoneTable = {}
         self.dnaStoreMap = {}
         self.dnaDataMap = {}
@@ -167,6 +170,10 @@ class ToontownAIRepository(ToontownInternalRepository):
 
         # Create our factory manager...
         self.factoryMgr = FactoryManagerAI(self)
+        
+        # Generate our tutorial manager...
+        self.tutorialManager = TutorialManagerAI(self)
+        self.tutorialManager.generateWithRequired(OTP_ZONE_ID_MANAGEMENT)
 
         # Create our mint manager...
         self.mintMgr = MintManagerAI(self)

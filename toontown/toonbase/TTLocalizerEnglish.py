@@ -564,7 +564,8 @@ QuestsItemDict = {1: ['Pair of Glasses', 'Pairs of Glasses', 'a '],
  7011: ['Cauliflower Coral', 'Cauliflower Coral', 'some '],
  7012: ['Slimy Kelp', 'Slimy Kelp', 'some '],
  7013: ['Pestle', 'Pestles', 'a '],
- 7014: ['Jar of Wrinkle Cream', 'Jars of Wrinkle Cream', 'a ']}
+ 7014: ['Jar of Wrinkle Cream', 'Jars of Wrinkle Cream', 'a '],
+ 8000: ['Stolen Silly-stat', 'Stolen Silly-stats', 'a ']}
 QuestsHQOfficerFillin = lHQOfficerM
 QuestsHQWhereFillin = ''
 QuestsHQBuildingNameFillin = lToonHQ
@@ -617,6 +618,9 @@ QuestDialogDict = {160: {GREETING: '',
        INCOMPLETE_WRONG_NPC: 'Good job defeating those Cogs. Now go to the Toon Headquarters for your next step!',
        COMPLETE: QuestsDefaultComplete,
        LEAVING: QuestsDefaultLeaving},
+ 13000: {QUEST: 'Hey there! Something just happend in the Toon Hall!\x07Go see %s, And find out whats the issue._where_' % Flippy},
+ 13001: {QUEST: "Oh I'm so glad to see you, _avName_!\x07A Two-Face just broke in and stole the Silly-stat, the heart of the Silly Meter!\x07If the Silly Meter is left without it for too long, it will shut down along with the all the silly of Toontown!\x07Please get it back, _avName_!"},
+ 13002: {QUEST: "There it is!\x07I'll bring this to Doctor Surlee to place back in, However.\x07The Resistance radar is saying some Tier Six Cogs are planning to invade Toon Hall\x07Show them to never mess with Toontown, _avName_!"},
  164: {QUEST: 'You look like you could use some new gags.\x07Go see %s, maybe he can help you out._where_' % Flippy},
  165: {QUEST: 'Hi there.\x07Looks like you need to practice training your gags.\x07Every time you hit a Cog with one of your gags, your experience increases.\x07When you get enough experience, you will be able to use an even better gag.\x07Go practice your gags by defeating 4 Cogs.'},
  166: {QUEST: 'Nice work defeating those Cogs.\x07You know, the Cogs come in four different types.\x07They are Lawbots, Cashbots, Sellbots, and Bossbots.\x07You can tell them apart by their coloring and their name labels.\x07For practice go defeat 4 Bossbots.'},
@@ -1910,6 +1914,8 @@ BattleSOSPopupHarm = 'Deals'
 BattleSOSPopupHP = '%s %s HP\n'
 
 DetailPanelSOS = 'SOS Cards'
+
+QuestsTrackChoiceFinalQuestSCString = "I'm ready to begin training my Final Track."
 
 ChatGarblerDuck = ['quack', 'quackity', 'quacky']
 ChatGarblerMonkey = ['ooh', 'ooo', 'ahh']

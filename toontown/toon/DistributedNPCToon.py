@@ -1,5 +1,5 @@
-from pandac.PandaModules import *
-from .DistributedNPCToonBase import *
+from panda3d.core import *
+from toontown.toon.DistributedNPCToonBase import *
 from toontown.quest import QuestParser
 from toontown.quest import QuestChoiceGui
 from toontown.quest import TrackChoiceGui
@@ -15,7 +15,7 @@ class DistributedNPCToon(DistributedNPCToonBase):
         self.curQuestMovie = None
         self.questChoiceGui = None
         self.trackChoiceGui = None
-        self.lerpCameraSeq = None
+        self.cameraLerp = None
         return
 
     def delayDelete(self):
@@ -87,9 +87,9 @@ class DistributedNPCToon(DistributedNPCToonBase):
         self.detectAvatars()
         self.initPos()
         if isLocalToon:
-            if self.lerpCameraSeq:
-                self.lerpCameraSeq.finish()
-                self.lerpCameraSeq = None
+            if self.cameraLerp:
+                self.cameraLerp.finish()
+                self.cameraLerp = None
             base.localAvatar.posCamera(0, 0)
             base.cr.playGame.getPlace().setState('walk')
             self.sendUpdate('setMovieDone', [])
@@ -101,13 +101,13 @@ class DistributedNPCToon(DistributedNPCToonBase):
         if mode == NPCToons.QUEST_MOVIE_QUEST_CHOICE or mode == NPCToons.QUEST_MOVIE_TRACK_CHOICE:
             quat = Quat()
             quat.setHpr((155, -2, 0))
-            self.lerpCameraSeq = camera.posQuatInterval(1, Point3(5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut', name=self.uniqueName('lerpCamera'))
-            self.lerpCameraSeq.start()
+            self.cameraLerp = camera.posQuatInterval(1, Point3(5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut', name=self.uniqueName('lerpCamera'))
+            self.cameraLerp.start()
         else:
             quat = Quat()
             quat.setHpr((-150, -2, 0))
-            self.lerpCameraSeq = camera.posQuatInterval(1, Point3(-5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut', name=self.uniqueName('lerpCamera'))
-            self.lerpCameraSeq.start()
+            self.cameraLerp = camera.posQuatInterval(1, Point3(-5, 9, self.getHeight() - 0.5), quat, other=self, blendType='easeOut', name=self.uniqueName('lerpCamera'))
+            self.cameraLerp.start()
 
     def setMovie(self, mode, npcId, avId, quests, timestamp):
         timeStamp = ClockDelta.globalClockDelta.localElapsedTime(timestamp)

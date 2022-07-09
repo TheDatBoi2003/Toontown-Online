@@ -8,6 +8,7 @@ from toontown.coghq import CogDisguiseGlobals
 from toontown.suit import DistributedFactorySuitAI
 from toontown.toonbase import ToontownGlobals, ToontownBattleGlobals
 from toontown.coghq import DistributedBattleFactoryAI
+from toontown.toon import NPCToons
 
 class DistributedFactoryAI(DistributedLevelAI.DistributedLevelAI, FactoryBase.FactoryBase):
     notify = DirectNotifyGlobal.directNotify.newCategory('DistributedFactoryAI')
@@ -97,6 +98,8 @@ class DistributedFactoryAI(DistributedLevelAI.DistributedLevelAI, FactoryBase.Fa
             self.air.writeServerEvent('factoryDefeated', avId, description)
 
         for toon in activeVictors:
+            earnedFriend = random.choice(NPCToons.npcFriendsMinMaxStars(1, 3))
+            toon.attemptAddNPCFriend(earnedFriend, numCalls=2)
             simbase.air.questManager.toonDefeatedFactory(toon, self.factoryId, activeVictors)
 
         return

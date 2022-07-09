@@ -278,15 +278,17 @@ class MaxToon(MagicWord):
 
         toon.b_setMaxCarry(ToontownGlobals.MaxCarryLimit)
         toon.b_setQuestCarryLimit(ToontownGlobals.MaxQuestCarryLimit)
+        toon.b_setRewardHistory(Quests.ALL_TIER, toon.getRewardHistory()[1])
 
         toon.experience.maxOutExp()
         toon.d_setExperience(toon.experience.makeNetString())
 
+        toon.inventory.zeroInv()
         toon.inventory.maxOutInv()
         toon.d_setInventory(toon.inventory.makeNetString())
 
-        toon.b_setMaxHp(ToontownGlobals.MaxHpLimit)
-        toon.b_setHp(ToontownGlobals.MaxHpLimit)
+        toon.b_setMaxHp(137)
+        toon.b_setHp(137)
 
         toon.b_setMaxMoney(250)
         toon.b_setMoney(toon.maxMoney)

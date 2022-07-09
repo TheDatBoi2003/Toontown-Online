@@ -789,6 +789,9 @@ class QuestPoster(DirectFrame):
                     lIconGeom = cogIcons.find('**/cog')
                     lIconGeomScale = IMAGE_SCALE_SMALL
                     cogIcons.removeNode()
+            elif quest.getType() == Quests.CogTierQuest:
+                lIconGeom = self.createSuitHead(quest.getRandomCog())
+                lIconGeomScale = IMAGE_SCALE_SMALL
             elif quest.getType() == Quests.CogLevelQuest:
                 cogIcons = loader.loadModel('phase_3/models/gui/cog_icons')
                 lIconGeom = cogIcons.find('**/cog')

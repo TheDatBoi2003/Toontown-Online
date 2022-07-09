@@ -27,6 +27,8 @@ class DistributedCashbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
         self.recycledTreasures = []
         self.healAmount = 0
         self.rewardId = ResistanceChat.getRandomId()
+        self.rewardId2 = ResistanceChat.getRandomId()
+        self.rewardId3 = ResistanceChat.getRandomId()
         self.rewardedToons = []
         self.scene = NodePath('scene')
         self.reparentTo(self.scene)
@@ -469,6 +471,11 @@ class DistributedCashbotBossAI(DistributedBossCogAI.DistributedBossCogAI, FSM.FS
             toon = self.air.doId2do.get(toonId)
             if toon:
                 toon.addResistanceMessage(self.rewardId)
+                toon.addResistanceMessage(self.rewardId)
+                toon.addResistanceMessage(self.rewardId2)
+                toon.addResistanceMessage(self.rewardId2)
+                toon.addResistanceMessage(self.rewardId3)
+                toon.addResistanceMessage(self.rewardId3)
                 toon.b_promote(self.deptIndex)
 
     def exitVictory(self):

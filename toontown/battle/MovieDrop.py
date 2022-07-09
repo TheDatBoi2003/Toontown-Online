@@ -244,6 +244,7 @@ def __dropObject(drop, delay, objName, level, alreadyDodged, alreadyTeased, npcs
         buttons = [button, button2]
         hands = toon.getLeftHands()
     object = globalPropPool.getProp(objName)
+    object.setBlend(frameBlend=True)
     objectType = globalPropPool.getPropType(objName)
     if objName == 'weight':
         object.setScale(object.getScale() * 0.75)

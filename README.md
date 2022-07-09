@@ -1,3 +1,16 @@
+# Patch Notes
+1.0.1:
+- Quests are now in!
+- A New Toontask, use the Max Toon Command to start it!
+- Added Cog Tier Quests!
+- Increased the normal movement speed.
+- Widescreen part 1.
+- Cog Bosses now give Extra Rewards!
+- The Sellbot Factory will give you 2 1-3 star sos cards.
+- lured cog animations.
+- Smooth Frames.
+
+
 # Open Toontown
 This repository contains the code for Open Toontown, based on the latest version of Disney's Toontown Online (sv1.0.47.38).
 
