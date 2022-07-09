@@ -304,3 +304,6 @@ TPhaveFun = 0.1
 TPjoinUs = 0.1
 TBSOSPSPenter = 0.1
 TexitButton = 0.8
+BattleHoverCog = 0
+BattleHoverGag = 1
+BattleHoverSos = 2

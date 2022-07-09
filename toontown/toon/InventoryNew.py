@@ -320,6 +320,16 @@ class InventoryNew(InventoryBase.InventoryBase, DirectFrame):
         self.detailCreditLabel.show()
         return
 
+    def getCurAndNextExpValues(self, track):
+        curSkill = self.toon.experience.getExp(track)
+        retVal = MaxSkill
+        for amount in Levels[track]:
+            if curSkill < amount:
+                retVal = amount
+                return (curSkill, retVal)
+
+        return (curSkill, retVal)
+    
     def setDetailCredit(self, track, credit):
         if credit != None:
             if self.toon.earnedExperience:

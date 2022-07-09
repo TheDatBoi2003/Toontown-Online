@@ -186,6 +186,7 @@ class DistributedToon(DistributedPlayer.DistributedPlayer, Toon.Toon, Distribute
         self.gmNameTagColor = 'whiteGM'
         self.gmNameTagString = ''
         self.transitioning = False
+        self.inventory = None
         return
 
     def disable(self):

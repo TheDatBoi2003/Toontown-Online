@@ -7,8 +7,11 @@ from . import SuitBattleGlobals, BattleExperienceAI
 from toontown.toon import NPCToons
 from toontown.pets import PetTricks, DistributedPetProxyAI
 from direct.showbase.PythonUtil import lerp
+from .BattleGlobals import *
+from direct.showbase.DirectObject import DirectObject
+from toontown.battle import BattleListener
 
-class BattleCalculatorAI:
+class BattleCalculatorAI(DirectObject):
     AccuracyBonuses = [
      0, 20, 40, 60]
     DamageBonuses = [
@@ -36,6 +39,7 @@ class BattleCalculatorAI:
     propAndOrganicBonusStack = simbase.config.GetBool('prop-and-organic-bonus-stack', 0)
 
     def __init__(self, battle, tutorialFlag=0):
+        DirectObject.__init__(self)
         self.battle = battle
         self.SuitAttackers = {}
         self.currentlyLuredSuits = {}
@@ -51,6 +55,9 @@ class BattleCalculatorAI:
         self.suitAtkStats = {}
         self.__clearBonuses(hp=1)
         self.__clearBonuses(hp=0)
+        
+        self.battleListener = BattleListener.BattleListenerAI(self, self.battle)
+        
         self.delayedUnlures = []
         self.__skillCreditMultiplier = 1
         self.tutorialFlag = tutorialFlag
@@ -568,7 +575,7 @@ class BattleCalculatorAI:
                     organicBonus = toon.checkGagBonus(attackTrack, attackLevel)
                     propBonus = self.__checkPropBonus(attackTrack)
                     if self.__attackHasHit(attack, suit=0) and atkTrack == SQUIRT:
-                        self.addSuitStatusEffect(targetId, 'soaked', 30)
+                        self.addSuitStatusEffect(targetId, 'soaked', 40)
                     attackDamage = getAvPropDamage(attackTrack, attackLevel, toon.experience.getExp(attackTrack), organicBonus, propBonus, self.propAndOrganicBonusStack)
                 if not self.__combatantDead(targetId, toon=toonTarget):
                     if self.__suitIsLured(targetId) and atkTrack == DROP:
