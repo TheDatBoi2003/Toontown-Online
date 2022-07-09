@@ -9,6 +9,16 @@
 - The Sellbot Factory will give you 2 1-3 star sos cards.
 - lured cog animations.
 - Smooth Frames.
+- Status Effect System for Battles.
+
+1.0.2a:
+- A New Toontask for Cashbot HQ!
+- Tier 7 and 8 Cogs can walk the Streets/Cog HQs!
+- Lowered the Damage for Legal Eagle's Pecking Order
+- Legal Eagles now have Guilt Trip!
+- Head Hunters now have Power Trip!
+- Cog Attack Titles now fade in and out smoothly.
+
 
 
 # Open Toontown

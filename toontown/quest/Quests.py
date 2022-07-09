@@ -67,7 +67,8 @@ DL_TIER = 14
 LAWBOT_HQ_TIER = 18
 BOSSBOT_HQ_TIER = 32
 ALL_TIER = 33
-ELDER_TIER = 50
+CFO_TIER = 34
+ELDER_TIER = 51
 LOOPING_FINAL_TIER = ELDER_TIER
 VISIT_QUEST_ID = 1000
 TROLLEY_QUEST_ID = 110
@@ -17732,7 +17733,18 @@ QuestDict = {
  # The Cogs are atempting to break the silly meter, and Toontown needs YOU, to stop them!
  13000: (ALL_TIER, Start, (VisitQuest,), Any, 2001, NA, 13001, TTLocalizer.QuestDialogDict[13000]),
  13001: (ALL_TIER, Cont, (RecoverItemQuest, Anywhere, 1, 8000, Medium, 'tf'), 2001, 2001, NA, 13002, TTLocalizer.QuestDialogDict[13001]),
- 13002: (ALL_TIER, Cont, (CogTierQuest, Anywhere, 5, 5), 2001, 2001, 100, NA, TTLocalizer.QuestDialogDict[13002])}
+ 13002: (ALL_TIER, Cont, (CogTierQuest, Anywhere, 5, 5), 2001, 2001, 100, NA, TTLocalizer.QuestDialogDict[13002]),
+ 
+ # This task will introduce you to Cashbot HQ, Mints, and Fighting the CFO!
+ 13009: (CFO_TIER, Start, (VisitQuest,), Any, 2001, NA, 13010, TTLocalizer.QuestDialogDict[13009]),
+ 13010: (CFO_TIER, Cont, (CogQuest, ToontownGlobals.CashbotHQ, 5, Any), 2001, 2001, NA, 13011, TTLocalizer.QuestDialogDict[13010]),
+ 13011: (CFO_TIER, Cont, (MintQuest, ToontownGlobals.CashbotMintIntA, 1), 2001, 2001, NA, 13012, TTLocalizer.QuestDialogDict[13011]),
+ 13012: (CFO_TIER, Cont, (MintQuest, ToontownGlobals.CashbotMintIntB, 1), 2001, 2001, NA, 13013, TTLocalizer.QuestDialogDict[13012]),
+ 13013: (CFO_TIER, Cont, (MintQuest, ToontownGlobals.CashbotMintIntC, 1), 2001, 2001, NA, 13014, TTLocalizer.QuestDialogDict[13013]),
+ 13014: (CFO_TIER, Cont, (CFOQuest, ToontownGlobals.CashbotHQ, 1), 2001, 2001, 100, NA, TTLocalizer.QuestDialogDict[13014]),
+ 
+ 
+ }
 
 Tier2QuestsDict = {}
 for questId, questDesc in list(QuestDict.items()):
@@ -19512,6 +19524,7 @@ RequiredRewardTrackDict = {TT_TIER: (100,),
  BOSSBOT_HQ_TIER + 15: (4215,),
  BOSSBOT_HQ_TIER + 16: (4216,),
  ALL_TIER: (100,),
+ CFO_TIER: (100,),
  ELDER_TIER: (4000,
               4001,
               4002,

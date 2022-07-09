@@ -6,6 +6,7 @@ from toontown.suit import SuitDNA
 from direct.actor import Actor
 from .ToonHead import *
 from panda3d.core import *
+from panda3d.direct import *
 from panda3d.otp import *
 from direct.interval.IntervalGlobal import *
 from direct.directnotify import DirectNotifyGlobal

@@ -618,9 +618,20 @@ QuestDialogDict = {160: {GREETING: '',
        INCOMPLETE_WRONG_NPC: 'Good job defeating those Cogs. Now go to the Toon Headquarters for your next step!',
        COMPLETE: QuestsDefaultComplete,
        LEAVING: QuestsDefaultLeaving},
+ #ALL TIER
  13000: {QUEST: 'Hey there! Something just happend in the Toon Hall!\x07Go see %s, And find out whats the issue._where_' % Flippy},
  13001: {QUEST: "Oh I'm so glad to see you, _avName_!\x07A Two-Face just broke in and stole the Silly-stat, the heart of the Silly Meter!\x07If the Silly Meter is left without it for too long, it will shut down along with the all the silly of Toontown!\x07Please get it back, _avName_!"},
  13002: {QUEST: "There it is!\x07I'll bring this to Doctor Surlee to place back in, However.\x07The Resistance radar is saying some Tier Six Cogs are planning to invade Toon Hall\x07Show them to never mess with Toontown, _avName_!"},
+ 
+ #CFO TIER
+ 13009: {QUEST: 'Hey there! have you talked to Flippy about the Cashbots yet? No?!\x07Go see %s, And he will tell you._where_' % Flippy},
+ 13010: {QUEST: "There you are, _avName_!\x07A Cog HQ is Glooming over Donalds Dreamland as we speak...!\x07Cashbot HQ is filled with Cog Bucks, Pollution, and Item Trading Trains.\x07_avName_. We will need to shut down all Three of there Mints and stop the C.F.O himself!\x07Take out the Cogs roaming around, then come back to me."},
+ 13011: {QUEST: "Alright, now you'll need to first intrude the Coin Mint!\x07The Coin Mint is the weakest Mint the Cashbots have.\x07Show them to never mess with Toontown, _avName_!"},
+ 13012: {QUEST: "Good with the Coin Mint shutdown, now you'll need to intrude the Dollar Mint!\x07The Dollar Mint is the Middle-Man of the Mints the Cashbots have.\x07Good Luck, _avName_!"},
+ 13013: {QUEST: "Good with the Dollar Mint shutdown, now you'll need to intrude the Bullion Mint!\x07The Bullion Mint is the Strongest of the Mints the Cashbots have.\x07Good Luck, _avName_!"},
+ 13014: {QUEST: "Alright _avName_! Nows your chance in the Spotlight!\x07Take down the C.F.O!\x07You got this, _avName_!"},
+ 
+ 
  164: {QUEST: 'You look like you could use some new gags.\x07Go see %s, maybe he can help you out._where_' % Flippy},
  165: {QUEST: 'Hi there.\x07Looks like you need to practice training your gags.\x07Every time you hit a Cog with one of your gags, your experience increases.\x07When you get enough experience, you will be able to use an even better gag.\x07Go practice your gags by defeating 4 Cogs.'},
  166: {QUEST: 'Nice work defeating those Cogs.\x07You know, the Cogs come in four different types.\x07They are Lawbots, Cashbots, Sellbots, and Bossbots.\x07You can tell them apart by their coloring and their name labels.\x07For practice go defeat 4 Bossbots.'},

@@ -16,7 +16,7 @@ class PlayByPlayText(OnscreenText.OnscreenText):
         OnscreenText.OnscreenText.__init__(self, mayChange=1, pos=(0.0, 0.75), scale=TTLocalizer.PBPTonscreenText, fg=(1, 0, 0, 1), font=getSignFont(), wordwrap=13)
 
     def getShowInterval(self, text, duration):
-        return Sequence(Func(self.hide), Wait(duration * 0.3), Func(self.setText, text), Func(self.show), Wait(duration * 0.7), Func(self.hide))
+        return Sequence(Func(self.hide), Wait(duration * 0.3), Func(self.setText, text), Func(self.show), LerpColorScaleInterval(self, 1.0, Vec4(1, 0, 0, 1), Vec4(1, 0, 0, 0), blendType='easeInOut'), Wait(duration * 0.2), LerpColorScaleInterval(self, 0.5, Vec4(1, 0, 0, 0), Vec4(1, 0, 0, 1), blendType='easeInOut'), Func(self.hide))
 
     def getToonsDiedInterval(self, textList, duration):
         track = Sequence(Func(self.hide), Wait(duration * 0.3))

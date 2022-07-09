@@ -263,6 +263,56 @@ class ToggleRun(MagicWord):
         inputState.set('debugRunning', not inputState.isSet('debugRunning'))
         return "Run mode has been toggled."
 
+class TeleportTime(MagicWord):
+    aliases = ["TRAVELBAYBE", "TpAccess"]
+    desc = "Maxes your target toon."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    accessLevel = 'ADMIN'
+
+    def handleWord(self, invoker, avId, toon, *args):
+        from toontown.toonbase import ToontownGlobals
+        toon.b_setHoodsVisited(ToontownGlobals.Hoods)
+        toon.b_setTeleportAccess(ToontownGlobals.HoodsForTeleportAll)
+        
+        return f"TOON HQ: {toon.getName()}, Travel Time!"
+        
+
+class ToggleGhost(MagicWord):
+    aliases = ["ghost"]
+    desc = "Set toon to invisible."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    accessLevel = 'MODERATOR'
+
+    def handleWord(self, invoker, avId, toon, *args):
+        if invoker.ghostMode == 0:
+            invoker.b_setGhostMode(2)
+            return "Going ghost!"
+        else:
+            invoker.b_setGhostMode(0)        
+
+class CFOTier(MagicWord):
+    aliases = ["cfoTF", "ayeCFO"]
+    desc = "Maxes your target toon."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    accessLevel = 'ADMIN'
+
+    def handleWord(self, invoker, avId, toon, *args):
+        from toontown.toonbase import ToontownGlobals
+        toon.b_setCogParts([
+            CogDisguiseGlobals.PartsPerSuitBitmasks[0],
+            CogDisguiseGlobals.PartsPerSuitBitmasks[1],
+            CogDisguiseGlobals.PartsPerSuitBitmasks[2],
+            CogDisguiseGlobals.PartsPerSuitBitmasks[3],
+        ])
+        toon.b_setCogLevels([ToontownGlobals.MaxCogSuitLevel] * 4 + [0])
+        toon.b_setCogTypes([7] * 4 + [0])
+        
+        for id in toon.getQuests():
+            toon.removeQuest(id)
+        toon.b_setRewardHistory(Quests.CFO_TIER, toon.getRewardHistory()[1])
+        
+        return f"TOON HQ: {toon.getName()}, Come see us for something special!"
+
 class MaxToon(MagicWord):
     aliases = ["max", "idkfa"]
     desc = "Maxes your target toon."
