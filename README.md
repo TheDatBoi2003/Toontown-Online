@@ -10,6 +10,7 @@
 - lured cog animations.
 - Smooth Frames.
 - Status Effect System for Battles.
+- Max Laff is 138!
 
 1.0.2a:
 - A New Toontask for Cashbot HQ!
@@ -18,7 +19,7 @@
 - Legal Eagles now have Guilt Trip!
 - Head Hunters now have Power Trip!
 - Cog Attack Titles now fade in and out smoothly.
-
+- Max Laff is 139!
 
 
 # Open Toontown
