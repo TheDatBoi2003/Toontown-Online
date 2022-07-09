@@ -44,7 +44,8 @@ class BattleCalculatorAI:
         self.toonHPAdjusts = {}
         self.toonSkillPtsGained = {}
         self.traps = {}
-        self.statusEffects = {}
+        self.toonStatusEffects = {}
+        self.suitStatusEffects = {}
         self.suitAccuracyStats = {}
         self.npcTraps = {}
         self.suitAtkStats = {}
@@ -226,23 +227,40 @@ class BattleCalculatorAI:
         return
 
     def addStatusEffect(self, targetId, statusString, value):
-        self.statusEffects[targetId] = [statusString, value]
+        self.toonStatusEffects[targetId] = [statusString, value]
     
     def getStatusEffect(self, targetId, statusString):
-        if targetId in self.statusEffects:
-            if self.statusEffects[targetId][0] == statusString:
-                return self.statusEffects[targetId]
+        if targetId in self.toonStatusEffects:
+            if self.toonStatusEffects[targetId][0] == statusString:
+                return self.toonStatusEffects[targetId]
         return 0
     
     def removeStatusEffect(self, targetId, statusString):
-        if targetId in self.statusEffects:
-            if self.statusEffects[targetId][0] == statusString:
-                del self.statusEffects[targetId]
+        if targetId in self.toonStatusEffects:
+            if self.toonStatusEffects[targetId][0] == statusString:
+                del self.toonStatusEffects[targetId]
     
     def handleStatusEffects(self, targetId):
+        pass
+    
+    def addSuitStatusEffect(self, targetId, statusString, value):
+        self.suitStatusEffects[targetId] = [statusString, value]
+    
+    def getSuitStatusEffect(self, targetId, statusString):
+        if targetId in self.suitStatusEffects:
+            if self.suitStatusEffects[targetId][0] == statusString:
+                return self.suitStatusEffects[targetId]
+        return 0
+    
+    def removeSuitStatusEffect(self, targetId, statusString):
+        if targetId in self.suitStatusEffects:
+            if self.suitStatusEffects[targetId][0] == statusString:
+                del self.suitStatusEffects[targetId]
+    
+    def handleSuitStatusEffects(self, targetId):
         try:
-            if self.statusEffects[targetId][0] == 'soaked':
-                self.suitIsSoaked(targetId, self.statusEffects[targetId][1])
+            if self.suitStatusEffects[targetId][0] == 'soaked':
+                self.suitIsSoaked(targetId, self.suitStatusEffects[targetId][1])
         except:
             pass
         
@@ -550,7 +568,7 @@ class BattleCalculatorAI:
                     organicBonus = toon.checkGagBonus(attackTrack, attackLevel)
                     propBonus = self.__checkPropBonus(attackTrack)
                     if self.__attackHasHit(attack, suit=0) and atkTrack == SQUIRT:
-                        self.addStatusEffect(targetId, 'soaked', 15)
+                        self.addSuitStatusEffect(targetId, 'soaked', 30)
                     attackDamage = getAvPropDamage(attackTrack, attackLevel, toon.experience.getExp(attackTrack), organicBonus, propBonus, self.propAndOrganicBonusStack)
                 if not self.__combatantDead(targetId, toon=toonTarget):
                     if self.__suitIsLured(targetId) and atkTrack == DROP:
@@ -1414,7 +1432,7 @@ class BattleCalculatorAI:
         
         self.__calculateToonAttacks()
         for suit in self.battle.activeSuits:
-            self.handleStatusEffects(suit.doId)
+            self.handleSuitStatusEffects(suit.doId)
         
         for toon in self.battle.activeToons:
             self.handleStatusEffects(toon)
