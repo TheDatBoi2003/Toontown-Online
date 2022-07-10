@@ -21,6 +21,13 @@
 - Cog Attack Titles now fade in and out smoothly.
 - Max Laff is 139!
 
+1.0.3a:
+- The menu screen from Project Altis is added!
+- Implemented a automatic way to calculate cog battle stats!
+- Started TTR's Bossbot HQ!
+- Cogs can go up to any level!
+
+
 
 # Open Toontown
 This repository contains the code for Open Toontown, based on the latest version of Disney's Toontown Online (sv1.0.47.38).

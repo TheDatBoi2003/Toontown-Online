@@ -47,9 +47,17 @@ class DistributedSuitBaseAI(DistributedAvatarAI.DistributedAvatarAI, SuitBase.Su
         self.notify.debug('Assigning level ' + str(lvl))
         if hasattr(self, 'doId'):
             self.d_setLevelDist(self.level)
-        hp = attributes['hp'][self.level]
+        try:
+            hp = attributes['hp'][self.level]
+        except:
+            hp = (lvl + 1) * (lvl + 2)
         self.maxHP = hp
         self.currHP = hp
+    
+    def promote(self, lvl):
+        self.setLevel(lvl)
+        self.sendUpdate('setLevelDist', [lvl])
+        
 
     def getLevelDist(self):
         return self.getLevel()

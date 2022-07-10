@@ -39,6 +39,8 @@ from . import PlayGame
 from toontown.toontowngui import ToontownLoadingBlocker
 from toontown.hood import StreetSign
 
+from toontown.dmenu import DMenuScreen
+
 class ToontownClientRepository(OTPClientRepository.OTPClientRepository):
     SupportTutorial = 1
     GameGlobalsId = OTP_DO_ID_TOONTOWN
@@ -208,14 +210,22 @@ class ToontownClientRepository(OTPClientRepository.OTPClientRepository):
         base.playMusic(self.music, looping=1, volume=0.9, interrupt=None)
         self.handler = self.handleMessageType
         self.avChoiceDoneEvent = 'avatarChooserDone'
-        self.avChoice = AvatarChooser.AvatarChooser(avList, self.loginFSM, self.avChoiceDoneEvent)
-        self.avChoice.load(self.isPaid())
-        self.avChoice.enter()
+        
+        self.PAT_AVLIST = avList
+        self.PAT_LOGINFSM = self.loginFSM
+        self.PAT_DONEEVENT = self.avChoiceDoneEvent
+        
+        self.acceptGame()
+        
         self.accept(self.avChoiceDoneEvent, self.__handleAvatarChooserDone, [avList])
         if ConfigVariableBool('want-gib-loader', 1).value:
             self.loadingBlocker = ToontownLoadingBlocker.ToontownLoadingBlocker(avList)
         return
 
+    def acceptGame(self):    
+        self.dmenu = DMenuScreen.DMenuScreen
+        self.dmenu()
+    
     def __handleAvatarChooserDone(self, avList, doneStatus):
         done = doneStatus['mode']
         if done == 'exit':

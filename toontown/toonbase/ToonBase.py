@@ -147,6 +147,24 @@ class ToonBase(OTPBase.OTPBase):
         self.oldX = max(1, base.win.getXSize())
         self.oldY = max(1, base.win.getYSize())
         self.aspectRatio = float(self.oldX) / self.oldY
+        
+        self.patgui = loader.loadModel('phase_3/models/gui/pick_a_toon_gui')
+        self.patgui.reparentTo(hidden)
+        
+        self.gui2 = loader.loadModel('phase_3/models/gui/quit_button')    
+        self.gui2.reparentTo(hidden)
+        
+        
+        self.newGui = loader.loadModel('phase_3/models/gui/tt_m_gui_pat_mainGui')
+        self.newGui.reparentTo(hidden)
+            
+        self.matGui = loader.loadModel('phase_3/models/gui/tt_m_gui_mat_mainGui')
+        self.matGui.reparentTo(hidden)
+        self.shuffleUp = self.matGui.find('**/tt_t_gui_mat_shuffleUp')
+        self.shuffleDown = self.matGui.find('**/tt_t_gui_mat_shuffleDown')
+        
+        
+        
         return
 
     def windowEvent(self, win):

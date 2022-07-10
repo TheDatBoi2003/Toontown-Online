@@ -661,6 +661,35 @@ class FeedDiners(MagicWord):
 
         return "All diners have been fed!"
 
+class SetUnites(MagicWord):
+    aliases = ["unites", "restockunites"]
+    desc = "Restocks the target's unites. The default amount is 999."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("amount", int, False, 999)]
+
+    def handleWord(self, invoker, avId, toon, *args):
+        amt = args[0]
+        if not 1 <= amt <= 999:
+            return "Unite amount must be between 0 and 999!"
+        toon.restockAllResistanceMessages(amt)
+        return "Restocked " + str(amt) + " unites successfully!"
+
+class SetPinkSlips(MagicWord):
+    aliases = ["pinkslips", "setfires", "fires"]
+    desc = "Sets the target's pink slips. The default amount is 255."
+    execLocation = MagicWordConfig.EXEC_LOC_SERVER
+    arguments = [("amount", int, False, 255)]
+
+    def handleWord(self, invoker, avId, toon, *args):
+        amt = args[0]
+        plural = 's'
+        if not 0 <= amt <= 255:
+            return "The amount must be between 0 and 255!"
+        if amt == 1:
+            plural = ''
+        toon.b_setPinkSlips(amt)
+        return "Restocked {0} pink slip{1} successfully!".format(amt, plural)
+
 class SpawnCog(MagicWord):
     aliases = ["cog"]
     desc = "Spawns a cog with the defined level"

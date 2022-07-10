@@ -76,7 +76,7 @@ class CogHQExterior(BattlePlace.BattlePlace):
         self.tunnelOriginList = base.cr.hoodMgr.addLinkTunnelHooks(self, self.nodeList, self.zoneId)
         how = requestStatus['how']
         self.fsm.request(how, [requestStatus])
-        if __astron__ and self.zoneId != ToontownGlobals.BossbotHQ:
+        if __astron__:
             self.handleInterests()
 
     def exit(self):

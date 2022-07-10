@@ -270,6 +270,12 @@ class BattleCalculatorAI(DirectObject):
                 self.suitIsSoaked(targetId, self.suitStatusEffects[targetId][1])
         except:
             pass
+        suit = self.battle.findSuit(targetId)
+        if suit.getSkeleRevives():
+            print('Cog Has Skele Revives')
+            self.addSuitStatusEffect(targetId, 'isV2', 15)
+
+            
         
     def suitIsSoaked(self, targetId, value):
         self.suitAccuracyStats[targetId] = ['soaked', value]
@@ -294,7 +300,10 @@ class BattleCalculatorAI(DirectObject):
     def __targetDefense(self, suit, atkTrack):
         if atkTrack == HEAL:
             return 0
-        suitDef = SuitBattleGlobals.SuitAttributes[suit.dna.name]['def'][suit.getLevel()]
+        try:
+            suitDef = SuitBattleGlobals.SuitAttributes[suit.dna.name]['def'][suit.getLevel()]
+        except:
+            suitDef = 55
         return -suitDef
 
     def __createToonTargetList(self, attackIndex):
@@ -577,6 +586,7 @@ class BattleCalculatorAI(DirectObject):
                     if self.__attackHasHit(attack, suit=0) and atkTrack == SQUIRT:
                         self.addSuitStatusEffect(targetId, 'soaked', 40)
                     attackDamage = getAvPropDamage(attackTrack, attackLevel, toon.experience.getExp(attackTrack), organicBonus, propBonus, self.propAndOrganicBonusStack)
+                attackDamage = math.ceil(attackDamage)
                 if not self.__combatantDead(targetId, toon=toonTarget):
                     if self.__suitIsLured(targetId) and atkTrack == DROP:
                         self.notify.debug('not setting validTargetAvail, since drop on a lured suit')
@@ -1175,7 +1185,10 @@ class BattleCalculatorAI(DirectObject):
         atkType = self.battle.suitAttacks[attackIndex][SUIT_ATK_COL]
         atkInfo = SuitBattleGlobals.getSuitAttack(theSuit.dna.name, theSuit.getLevel(), atkType)
         atkAcc = atkInfo['acc']
-        suitAcc = SuitBattleGlobals.SuitAttributes[theSuit.dna.name]['acc'][theSuit.getLevel()]
+        try:
+            suitAcc = SuitBattleGlobals.SuitAttributes[theSuit.dna.name]['acc'][theSuit.getLevel()]
+        except:
+            suitAcc = 85
         
         acc = atkAcc
         try:
@@ -1422,7 +1435,7 @@ class BattleCalculatorAI(DirectObject):
             for j in range(longest):
                 self.battle.toonAttacks[t][TOON_HP_COL].append(-1)
                 self.battle.toonAttacks[t][TOON_KBBONUS_COL].append(-1)
-
+        
         for i in range(4):
             for j in range(len(self.battle.activeToons)):
                 self.battle.suitAttacks[i][SUIT_HP_COL].append(-1)

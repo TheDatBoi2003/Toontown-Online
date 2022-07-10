@@ -4,7 +4,7 @@ from panda3d.core import *
 
 from direct.directnotify.DirectNotifyGlobal import directNotify
 
-notify = directNotify.newCategory('BattleGlobals')
+notify = directNotify.newCategory("BattleGlobals")
 
 BATTLE_TOWN = 0
 BATTLE_BLDG = 1

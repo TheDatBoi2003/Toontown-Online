@@ -91,7 +91,7 @@ class SuitPlannerInteriorAI:
     def __genNormalSuitType(self, lvl):
         if self.dbg_defaultSuitType != None:
             return self.dbg_defaultSuitType
-        return SuitDNA.getRandomSuitType(lvl)
+        return SuitDNA.getRandomSuitTypeSuitInterior(lvl)
 
     def __genLevelList(self, bldgLevel, currFloor, numFloors):
         bldgInfo = SuitBuildingGlobals.SuitBuildingInfo[bldgLevel]
@@ -142,7 +142,8 @@ class SuitPlannerInteriorAI:
         skel = self.__setupSuitInfo(newSuit, bldgTrack, suitLevel, suitType)
         if skel:
             newSuit.setSkelecog(1)
-        newSuit.setSkeleRevives(revives)
+        if revives:
+            newSuit.setSkeleRevives(random.randint(0, 1))
         newSuit.generateWithRequired(suitZone)
         newSuit.node().setName('suit-%s' % newSuit.doId)
         return newSuit
