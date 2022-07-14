@@ -27,7 +27,24 @@
 - Started TTR's Bossbot HQ!
 - Cogs can go up to any level!
 
+LIVE - 1.0.4a:
+- Balanced out some gags!
 
+# HOW TO PLAY!
+
+Go to https://www.vpn.net/ make a account and download the application!
+
+Once you have opened the aplication login to your account, then go to network - join network.
+
+Once you get to this part type in one of the network's id and password!
+
+# NETWORKS
+
+NetworkId: FunnyLane - Password: FunnyLane
+
+NetworkId: SeltzerSummit - Password: SeltzerSummit
+
+NetworkId: LaughTafy - Password: LaughTafy
 
 # Open Toontown
 This repository contains the code for Open Toontown, based on the latest version of Disney's Toontown Online (sv1.0.47.38).
