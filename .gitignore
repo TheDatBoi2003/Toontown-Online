@@ -7,7 +7,6 @@ sign/
 whitelist/
 *.so
 *.DS_Store
-*.jpg
 .idea
 venv/
 *.json
